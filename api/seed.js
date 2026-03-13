@@ -5,6 +5,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' });
 
+  try {
   const pool = getPool();
 
   // Create tables
@@ -71,4 +72,8 @@ export default async function handler(req, res) {
   `);
 
   res.json({ message: 'Database seeded successfully', businesses: businesses.length, ads: 2 });
+  } catch (err) {
+    console.error('Seed error:', err);
+    res.status(500).json({ error: err.message, stack: err.stack });
+  }
 }
