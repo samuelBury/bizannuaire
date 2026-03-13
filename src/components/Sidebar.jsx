@@ -44,13 +44,13 @@ export default function Sidebar({ ads = [], onCategoryChange }) {
       </div>
 
       {ads.map((ad) => (
-        <div key={ad.id} className="sidebar-ad">
-          <img className="ad-image" src={ad.image} alt={ad.title} />
-          <div className="ad-body">
-            <div className="ad-label">Publicité</div>
-            <div className="ad-title">{ad.title}</div>
-            <p className="ad-description">{ad.description}</p>
-            <a href="#" className="ad-cta">{ad.cta} →</a>
+        <div key={ad.id} className="sidebar-promo">
+          <img className="promo-image" src={ad.image} alt={ad.title} />
+          <div className="promo-body">
+            <div className="promo-label">Publicité</div>
+            <div className="promo-title">{ad.title}</div>
+            <p className="promo-description">{ad.description}</p>
+            <a href="#" className="promo-cta">{ad.cta} →</a>
           </div>
         </div>
       ))}

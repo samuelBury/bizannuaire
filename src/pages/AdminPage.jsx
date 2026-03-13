@@ -262,15 +262,15 @@ function AdminDashboard({ onLogout }) {
                 <Plus size={18} /> Ajouter un encart
               </button>
             </div>
-            <div className="ads-grid">
+            <div className="promos-grid">
               {adList.map((ad) => (
-                <div key={ad.id} className="ad-admin-card">
-                  <img src={ad.image} alt="" className="ad-admin-img" />
-                  <div className="ad-admin-body">
+                <div key={ad.id} className="promo-admin-card">
+                  <img src={ad.image} alt="" className="promo-admin-img" />
+                  <div className="promo-admin-body">
                     <h3>{ad.title}</h3>
                     <p>{ad.description}</p>
-                    <div className="ad-admin-cta">{ad.cta}</div>
-                    <div className="ad-admin-actions">
+                    <div className="promo-admin-cta">{ad.cta}</div>
+                    <div className="promo-admin-actions">
                       <button className="action-btn edit"><Edit3 size={15} /></button>
                       <button className="action-btn delete" onClick={async () => { await api.deleteAd(ad.id); loadData(); }}>
                         <Trash2 size={15} />
