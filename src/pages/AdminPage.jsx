@@ -22,8 +22,8 @@ export default function AdminPage() {
       } else {
         setLoginError(data.error || 'Erreur de connexion');
       }
-    } catch {
-      setLoginError('Identifiants incorrects');
+    } catch (err) {
+      setLoginError(err.message || 'Identifiants incorrects');
     }
     setLoginLoading(false);
   };

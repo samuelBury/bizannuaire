@@ -6,7 +6,9 @@ async function request(path, options = {}) {
     ...options,
   });
   if (res.status === 204) return null;
-  return res.json();
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Erreur serveur');
+  return data;
 }
 
 export const api = {
