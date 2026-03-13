@@ -1,4 +1,17 @@
-import { getPool, cors } from '../_db.js';
+import pg from 'pg';
+const { Pool } = pg;
+
+let pool;
+function getPool() {
+  if (!pool) pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+  return pool;
+}
+
+function cors(res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+}
 
 export default async function handler(req, res) {
   cors(res);
