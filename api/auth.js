@@ -1,5 +1,3 @@
-import crypto from 'crypto';
-
 export default function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -7,16 +5,22 @@ export default function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' });
 
-  const { username, password } = req.body || {};
-  const validUser = process.env.ADMIN_USER || 'admin';
-  const validPass = process.env.ADMIN_PASSWORD;
+  try {
+    const { username, password } = req.body || {};
+    const validUser = process.env.ADMIN_USER || 'admin';
+    const validPass = process.env.ADMIN_PASSWORD;
 
-  if (!validPass) return res.status(500).json({ error: 'Admin password not configured' });
+    if (!validPass) {
+      return res.status(500).json({ error: 'Admin password not configured' });
+    }
 
-  if (username === validUser && password === validPass) {
-    const token = crypto.createHmac('sha256', validPass).update(username + Date.now()).digest('hex');
-    return res.json({ token });
+    if (username === validUser && password === validPass) {
+      const token = Buffer.from(username + ':' + Date.now()).toString('base64');
+      return res.status(200).json({ token });
+    }
+
+    return res.status(401).json({ error: 'Identifiants incorrects' });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
   }
-
-  res.status(401).json({ error: 'Identifiants incorrects' });
 }
