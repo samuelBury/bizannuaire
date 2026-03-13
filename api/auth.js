@@ -14,12 +14,27 @@ export default function handler(req, res) {
       return res.status(500).json({ error: 'Admin password not configured' });
     }
 
-    if (username === validUser && password === validPass) {
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Username and password required' });
+    }
+
+    const userMatch = username.trim() === validUser.trim();
+    const passMatch = password.trim() === validPass.trim();
+
+    if (userMatch && passMatch) {
       const token = Buffer.from(username + ':' + Date.now()).toString('base64');
       return res.status(200).json({ token });
     }
 
-    return res.status(401).json({ error: 'Identifiants incorrects' });
+    return res.status(401).json({
+      error: 'Identifiants incorrects',
+      debug: {
+        userLen: username.length,
+        expectedUserLen: validUser.trim().length,
+        passLen: password.length,
+        expectedPassLen: validPass.trim().length,
+      }
+    });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
