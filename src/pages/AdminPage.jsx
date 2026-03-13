@@ -2,9 +2,66 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { categories } from '../data/mockData';
 import { api } from '../api';
-import { Trash2, Edit3, Plus, Star, ArrowLeft, ToggleLeft, ToggleRight, RefreshCw } from 'lucide-react';
+import { Trash2, Edit3, Plus, Star, ArrowLeft, ToggleLeft, ToggleRight, RefreshCw, Lock, LogOut } from 'lucide-react';
 
 export default function AdminPage() {
+  const [authed, setAuthed] = useState(() => !!sessionStorage.getItem('admin_token'));
+  const [loginError, setLoginError] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoginError('');
+    setLoginLoading(true);
+    const form = new FormData(e.target);
+    try {
+      const data = await api.login(form.get('username'), form.get('password'));
+      if (data.token) {
+        sessionStorage.setItem('admin_token', data.token);
+        setAuthed(true);
+      } else {
+        setLoginError(data.error || 'Erreur de connexion');
+      }
+    } catch {
+      setLoginError('Identifiants incorrects');
+    }
+    setLoginLoading(false);
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('admin_token');
+    setAuthed(false);
+  };
+
+  if (!authed) {
+    return (
+      <div className="admin-login">
+        <form className="admin-login-card" onSubmit={handleLogin}>
+          <div className="admin-login-icon"><Lock size={32} /></div>
+          <h1>Administration</h1>
+          <p>Connectez-vous pour accéder au panneau d'administration.</p>
+          {loginError && <div className="admin-login-error">{loginError}</div>}
+          <div className="admin-login-field">
+            <label>Identifiant</label>
+            <input name="username" type="text" required autoFocus placeholder="admin" />
+          </div>
+          <div className="admin-login-field">
+            <label>Mot de passe</label>
+            <input name="password" type="password" required placeholder="Mot de passe" />
+          </div>
+          <button type="submit" className="admin-btn primary" disabled={loginLoading} style={{ width: '100%', justifyContent: 'center' }}>
+            {loginLoading ? 'Connexion...' : 'Se connecter'}
+          </button>
+          <Link to="/" className="admin-login-back">Retour au site</Link>
+        </form>
+      </div>
+    );
+  }
+
+  return <AdminDashboard onLogout={handleLogout} />;
+}
+
+function AdminDashboard({ onLogout }) {
   const [activeTab, setActiveTab] = useState('businesses');
   const [businessList, setBusinessList] = useState([]);
   const [adList, setAdList] = useState([]);
@@ -78,6 +135,9 @@ export default function AdminPage() {
           <Link to="/" className="admin-back">
             <ArrowLeft size={16} /> Voir le site
           </Link>
+          <button className="admin-back" onClick={onLogout} style={{ border: 'none', background: 'none', cursor: 'pointer', marginTop: '0.75rem', fontFamily: 'inherit' }}>
+            <LogOut size={16} /> Déconnexion
+          </button>
         </div>
       </aside>
 

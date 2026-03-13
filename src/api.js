@@ -22,4 +22,5 @@ export const api = {
   deleteAd: (id) => request(`/api/ads/${id}`, { method: 'DELETE' }),
 
   seed: () => request('/api/seed', { method: 'POST' }),
+  login: (username, password) => request('/api/auth', { method: 'POST', body: JSON.stringify({ username, password }) }),
 };
